@@ -92,8 +92,8 @@ extension Future where T: User {
 }
 
 extension User: BasicAuthenticatable {
-  static let usernameKey: UsernameKey = \User.username
-  static let passwordKey: PasswordKey = \User.password
+    static var usernameKey: WritableKeyPath<User, String> = \User.username
+    static var passwordKey: WritableKeyPath<User, String> = \User.password
 }
 
 extension User: TokenAuthenticatable {

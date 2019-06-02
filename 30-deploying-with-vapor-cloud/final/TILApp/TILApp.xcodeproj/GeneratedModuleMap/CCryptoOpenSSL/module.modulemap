@@ -1,0 +1,4 @@
+module CCryptoOpenSSL {
+    umbrella "/Users/handa/Downloads/Server_Side_Swift_with_Vapor_v2.0/30-deploying-with-vapor-cloud/final/TILApp/.build/checkouts/crypto/Sources/CCryptoOpenSSL/include"
+    export *
+}

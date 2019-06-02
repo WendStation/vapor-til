@@ -34,20 +34,67 @@ final class User: Codable {
   var id: UUID?
   var name: String
   var username: String
+  var password: String
 
-  init(name: String, username: String) {
-    self.name = name
-    self.username = username
-  }
+    init(name: String, username: String, password: String) {
+        self.name = name
+        self.username = username
+        self.password = password
+    }
+    
+    final class Public: Codable {
+        var id: UUID?
+        var name: String
+        var username: String
+        
+        init(id: UUID?, name: String, username: String) {
+            self.id = id
+            self.name = name
+            self.username = username
+        }
+    }
 }
 
 extension User: PostgreSQLUUIDModel {}
 extension User: Content {}
-extension User: Migration {}
+extension User: Migration {
+    static func prepare(on connection: PostgreSQLConnection)
+        -> Future<Void> {
+            // 1
+            return Database.create(self, on: connection) { builder in
+                // 2
+                try addProperties(to: builder)
+                // 3
+                builder.unique(on: \.username)
+            }
+    }
+}
 extension User: Parameter {}
+
+extension User.Public: Content {}
+extension User.Public: PostgreSQLUUIDModel {}
 
 extension User {
   var acronyms: Children<User, Acronym> {
     return children(\.userID)
   }
 }
+extension User {
+    // 1
+    func convertToPublic() -> User.Public {
+        // 2
+        return User.Public(id: id, name: name, username: username)
+    }
+}
+extension Future where T: User {
+    // 2
+    func convertToPublic() -> Future<User.Public> {
+        // 3
+        return self.map(to: User.Public.self) { user in
+            // 4
+            return user.convertToPublic()
+        }
+    }
+}
+
+

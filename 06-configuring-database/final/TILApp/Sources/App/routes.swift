@@ -27,6 +27,7 @@
 /// THE SOFTWARE.
 
 import Vapor
+import Fluent
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
@@ -35,10 +36,15 @@ public func routes(_ router: Router) throws {
     return "Hello, world!"
   }
 
-  router.post("api", "acronyms") { req -> Future<Acronym> in
-    return try req.content.decode(Acronym.self).flatMap(to: Acronym.self) { acronym in
-      return acronym.save(on: req)
-    }
-  }
-
+    let acronymsController = AcronymsController()
+    try router.register(collection: acronymsController)
+    
+    let userController = UserController()
+    try router.register(collection: userController)
+    
+    // 1
+    let categoriesController = CategoriesController()
+    // 2
+    try router.register(collection: categoriesController)
+    
 }

@@ -29,6 +29,7 @@
 import Vapor
 import Fluent
 
+
 struct AcronymsController: RouteCollection {
   func boot(router: Router) throws {
     let acronymsRoutes = router.grouped("api", "acronyms")
@@ -91,9 +92,9 @@ struct AcronymsController: RouteCollection {
     return Acronym.query(on: req).sort(\.short, .ascending).all()
   }
 
-  func getUserHandler(_ req: Request) throws -> Future<User> {
-    return try req.parameters.next(Acronym.self).flatMap(to: User.self) { acronym in
-      acronym.user.get(on: req)
+  func getUserHandler(_ req: Request) throws -> Future<User.Public> {
+    return try req.parameters.next(Acronym.self).flatMap(to: User.Public.self) { acronym in
+      acronym.user.get(on: req).convertToPublic()
     }
   }
 
